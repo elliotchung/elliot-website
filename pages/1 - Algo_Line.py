@@ -70,9 +70,9 @@ def get_trendline_df(stock_id):
     cursor.close()
     return df
 
-def filter_trendline_df(trendline_df, trendline_length = 1, gradient_threshold = 0, min_touches = 10):
+def filter_trendline_df(trendline_df, trendline_length=1, gradient_range=(-1, 1), min_touches=10):
     trendline_df = trendline_df[trendline_df.breach_idx - trendline_df.start_idx >= trendline_length]
-    trendline_df = trendline_df[trendline_df.gradient <= gradient_threshold]
+    trendline_df = trendline_df[(trendline_df.gradient >= gradient_range[0]) & (trendline_df.gradient <= gradient_range[1])]
     trendline_df = trendline_df[trendline_df.num_touches >= min_touches]
     trendline_df.reset_index(drop=True, inplace=True)
     return trendline_df
