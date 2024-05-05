@@ -61,7 +61,7 @@ def get_trendline_df(stock_id):
     # Create a cursor object to execute SQL statements
     cursor = conn.cursor()
     cursor.execute(
-        sql.SQL("select start_idx, end_idx, breach_idx, gradient, y_intercept, num_touches from possible_trendline where stock_id = %s;"),
+        sql.SQL("select start_idx, end_idx, breach_idx, gradient, y_intercept, num_touches from possible_trendline_2 where stock_id = %s;"),
         [stock_id]
     )
     data = cursor.fetchall()
@@ -165,10 +165,14 @@ chart_height = st.sidebar.slider("Chart height", 400, 1200, 800)
 
 st.sidebar.subheader("Customise Trendline:")
 trendline_length = st.sidebar.slider("Minimum trendline length", 1, 2000, 100)
-gradient_threshold = st.sidebar.slider("Maximum gradient", -1., 1., 0., 0.01)
-min_touches = st.sidebar.slider("Minimum touches", 1, 100, 10)
 
-filtered_trendline_df = filter_trendline_df(trendline_df, trendline_length, gradient_threshold, min_touches)
+min_gradient = st.sidebar.slider("Minimum gradient", -0.5, 0.5, -0.01, 0.01)
+max_gradient = st.sidebar.slider("Maximum gradient", -0.5, 0.5, 0.01, 0.01)
+
+
+min_touches = st.sidebar.slider("Minimum touches", 1, 50, 10)
+
+filtered_trendline_df = filter_trendline_df(trendline_df, trendline_length, (min_gradient, max_gradient), min_touches)
 
 if len(filtered_trendline_df) > 500:
     st.write("Too many trendlines, only displaying sampled 500")
